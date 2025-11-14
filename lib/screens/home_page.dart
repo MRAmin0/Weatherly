@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool _showSearchLoading = false;
   DateTime? _searchLoadingStartedAt;
   bool _shownLocationDeniedToast = false;
+  bool _showAqiGuide = false;
 
   @override
   void initState() {
@@ -504,104 +505,296 @@ class _HomePageState extends State<HomePage> {
       child: Center(
         child: SizedBox(
           width: math.min(MediaQuery.of(context).size.width, 900.0),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.air_rounded, color: color, size: 32),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _showAqiGuide = !_showAqiGuide;
+                  });
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            'شاخص کیفیت هوا (AQI)',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                          Icon(Icons.air_rounded, color: color, size: 32),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'شاخص کیفیت هوا (AQI)',
+                                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            status,
-                            style: TextStyle(
-                              color: color,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                                const SizedBox(height: 4),
+                                Text(
+                                  status,
+                                  style: TextStyle(
+                                    color: color,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: color.withAlpha(51),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              toPersianDigits('AQI $aqi'),
+                              style: TextStyle(
+                                color: color,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            _showAqiGuide
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: Theme.of(context).iconTheme.color,
                           ),
                         ],
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: color.withAlpha(51),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        toPersianDigits('AQI $aqi'),
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(height: 16),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 12,
+                          backgroundColor: Colors.grey.withAlpha(51),
+                          valueColor: AlwaysStoppedAnimation<Color>(color),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 12,
-                    backgroundColor: Colors.grey.withAlpha(51),
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            toPersianDigits('0'),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color
+                                      ?.withAlpha(153),
+                                ),
+                          ),
+                          Text(
+                            toPersianDigits('500'),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color
+                                      ?.withAlpha(153),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      toPersianDigits('0'),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.color
-                                ?.withAlpha(153),
-                          ),
-                    ),
-                    Text(
-                      toPersianDigits('500'),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.color
-                                ?.withAlpha(153),
-                          ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                child: _showAqiGuide
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: _buildAqiGuideTable(context),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildAqiGuideTable(BuildContext context) {
+    final aqiRanges = [
+      {
+        'label': 'خیلی خوب',
+        'range': '0 - 25',
+        'color': const Color(0xFF00E400),
+        'recommendation': 'فعالیت‌های عادی در فضای باز',
+      },
+      {
+        'label': 'خوب',
+        'range': '26 - 37',
+        'color': const Color(0xFF7CB342),
+        'recommendation': 'باید احتیاط کرد',
+      },
+      {
+        'label': 'متوسط',
+        'range': '38 - 50',
+        'color': const Color(0xFFFFC107),
+        'recommendation': 'از فعالیت در فضای باز خودداری کنید',
+      },
+      {
+        'label': 'ضعیف',
+        'range': '51 - 90',
+        'color': const Color(0xFFFF7E00),
+        'recommendation': 'در فضای باز ماسک بزنید',
+      },
+      {
+        'label': 'خیلی ضعیف',
+        'range': '90 به بالا',
+        'color': const Color(0xFFFF0000),
+        'recommendation': 'فعالیت در فضای باز انجام ندهید',
+      },
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withAlpha(51),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'راهنمای شاخص کیفیت هوا',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 16),
+          ...aqiRanges.map((item) {
+            final color = item['color'] as Color;
+            final label = item['label'] as String;
+            final range = item['range'] as String;
+            final recommendation = item['recommendation'] as String;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: color.withAlpha(25),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: color.withAlpha(102),
+                  width: 1.5,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(12),
+                        bottomRight: Radius.circular(12),
+                      ),
+                    ),
+                    child: Icon(
+                      _getAqiEmoji(color),
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  label,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                toPersianDigits(range),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            recommendation,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color
+                                      ?.withAlpha(179),
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  IconData _getAqiEmoji(Color color) {
+    final colorValue = color.toARGB32();
+    if (colorValue == const Color(0xFF00E400).toARGB32() ||
+        colorValue == const Color(0xFF7CB342).toARGB32()) {
+      return Icons.sentiment_very_satisfied;
+    } else if (colorValue == const Color(0xFFFFC107).toARGB32()) {
+      return Icons.sentiment_neutral;
+    } else {
+      return Icons.sentiment_very_dissatisfied;
+    }
   }
 
 }

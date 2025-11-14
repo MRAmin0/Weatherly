@@ -79,7 +79,7 @@ Color statusColorForAqi(int aqi) {
   if (aqi <= 50) {
     return const Color(0xFF00E400); // Good - سبز روشن
   } else if (aqi <= 100) {
-    return const Color(0xFFFFFF00); // Moderate - زرد
+    return const Color(0xFFFFC107); // Moderate - زرد (تیره‌تر برای لایت مود)
   } else if (aqi <= 150) {
     return const Color(0xFFFF7E00); // Unhealthy for Sensitive Groups - نارنجی
   } else if (aqi <= 200) {
