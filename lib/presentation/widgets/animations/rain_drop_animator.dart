@@ -34,14 +34,15 @@ class _RainDropAnimatorState extends State<RainDropAnimator>
 
   void _createDrops() {
     _drops.clear();
-    for (int i = 0; i < 25; i++) {
+    for (int i = 0; i < 45; i++) {
       _drops.add(
         _RainDrop(
           x: _random.nextDouble(),
           y: _random.nextDouble(),
-          speed: 0.05 + _random.nextDouble() * 0.1,
-          length: 10 + _random.nextDouble() * 15,
-          opacity: 0.2 + _random.nextDouble() * 0.5,
+          speed: 0.1 + _random.nextDouble() * 0.15,
+          length: 15 + _random.nextDouble() * 20,
+          opacity: 0.1 + _random.nextDouble() * 0.4,
+          thickness: 0.5 + _random.nextDouble() * 1.5,
         ),
       );
     }
@@ -65,7 +66,7 @@ class _RainDropAnimatorState extends State<RainDropAnimator>
             painter: _RainPainter(
               drops: _drops,
               progress: _controller.value,
-              color: Colors.lightBlueAccent.withValues(alpha: 0.8),
+              baseColor: Colors.lightBlueAccent,
             ),
           );
         },
@@ -80,6 +81,7 @@ class _RainDrop {
   final double speed;
   final double length;
   final double opacity;
+  final double thickness;
 
   _RainDrop({
     required this.x,
@@ -87,39 +89,51 @@ class _RainDrop {
     required this.speed,
     required this.length,
     required this.opacity,
+    required this.thickness,
   });
 }
 
 class _RainPainter extends CustomPainter {
   final List<_RainDrop> drops;
   final double progress;
-  final Color color;
+  final Color baseColor;
 
   _RainPainter({
     required this.drops,
     required this.progress,
-    required this.color,
+    required this.baseColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..strokeCap = StrokeCap.round
-      ..strokeWidth = 1.5;
-
     for (var drop in drops) {
       // Calculate current position with wraparound
-      double currentY = (drop.y + progress * drop.speed * 20) % 1.0;
+      double currentY = (drop.y + progress * drop.speed * 10) % 1.0;
       double startX = drop.x * size.width;
       double startY = currentY * size.height;
 
-      // Slight tilt for more organic look
-      double endX = startX + 2;
+      // Organic tilt and drift
+      double endX = startX + 1.5;
       double endY = startY + drop.length;
 
-      // Draw the drop as a line
-      paint.color = color.withValues(alpha: drop.opacity);
+      final Rect dropRect = Rect.fromPoints(
+        Offset(startX, startY),
+        Offset(endX, endY),
+      );
+
+      // Create a gradient for a tapering/fade effect
+      final paint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            baseColor.withValues(alpha: 0.0), // Top is invisible
+            baseColor.withValues(alpha: drop.opacity), // Bottom is visible
+          ],
+        ).createShader(dropRect)
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = drop.thickness;
+
       canvas.drawLine(Offset(startX, startY), Offset(endX, endY), paint);
     }
   }

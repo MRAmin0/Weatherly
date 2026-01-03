@@ -48,26 +48,26 @@ class MainWeatherIcon extends StatelessWidget {
         weatherType == WeatherType.thunderstorm) {
       return SizedBox(
         width: size,
-        height: size * 1.3, // ارتفاع بیشتر برای ریزش قطرات
+        height: size * 1.5, // افزایش ارتفاع برای فاصله گرفتن از دما
         child: Stack(
           alignment: Alignment.topCenter,
           clipBehavior: Clip.none,
           children: [
-            // لایه ۱: ریزش قطرات (زیر ابر میاد ولی پوزیشنش تنظیم شده - پایین‌تر)
+            // لایه ۱: ریزش قطرات (پشت ابر - پایین‌تر رفته تا بالای ابر دیده نشود)
             Positioned(
-              top: size * 0.60, // بارش پایین‌تر شروع شود
-              child: RainDropAnimator(width: size, height: size * 0.8),
+              top: size * 0.55,
+              child: RainDropAnimator(width: size, height: size * 0.6),
             ),
 
-            // لایه ۲: ابر متحرک (بالاتر رفته و خیلی بزرگتر شده)
+            // لایه ۲: ابر متحرک (بالاتر رفته)
             Positioned(
-              top: -size * 0.25,
+              top: -size * 0.75,
               child: WeatherAnimator(
                 weatherType: WeatherType.clouds, // بازگرداندن انیمیشن
                 child: SvgPicture.string(
                   cloudSvg,
-                  width: size * 1.35, // ۳۵ درصد بزرگتر
-                  height: size * 1.35,
+                  width: size * 1.6, // ۶۰ درصد بزرگتر
+                  height: size * 1.6,
                 ),
               ),
             ),

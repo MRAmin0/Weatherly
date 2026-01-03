@@ -28,7 +28,6 @@ const String cloudSvg = '''
         <path
             d="M44 48C44 50.2 42.2 52 40 52H22C18.7 52 16 49.3 16 46C16 43.2 17.9 40.8 20.5 40.2C21.1 36.7 24.1 34 27.8 34C31.5 34 34.7 36.4 35.6 40C35.9 40 36.1 40 36.4 40C38.4 40 40 41.6 40 43.6C40 43.9 40 44.1 39.9 44.4C42.2 44.9 44 46.9 44 48Z"
             fill="#78909C"
-            opacity="0.9"
             transform="translate(-8, -12) scale(1.5)"
         />
         <path
@@ -39,8 +38,8 @@ const String cloudSvg = '''
     </g>
     <defs>
         <linearGradient id="cloudGrad" x1="27.8" y1="34" x2="27.8" y2="52" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#CFD8DC" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="#455A64" stop-opacity="0.6"/>
+            <stop offset="0%" stop-color="#CFD8DC" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#455A64" stop-opacity="1.0"/>
         </linearGradient>
     </defs>
 </svg>
