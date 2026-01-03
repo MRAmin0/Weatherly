@@ -1,5 +1,38 @@
 import 'package:intl/intl.dart';
 import 'package:weatherly_app/data/models/weather_type.dart';
+import 'package:weatherly_app/core/utils/city_utils.dart';
+
+/// Formats temperature with unit and localized digits
+/// Handles the -0 case by taking absolute value for zero
+String formatTemperature(
+  num temp, {
+  bool isCelsius = true,
+  bool isPersian = false,
+}) {
+  double value = temp.toDouble();
+  if (!isCelsius) {
+    value = (value * 9 / 5) + 32;
+  }
+
+  // Round to nearest integer
+  int rounded = value.round();
+
+  // Fix for negative zero: if rounded value is 0, ensure it is positive 0
+  if (rounded == 0) {
+    rounded = 0;
+  }
+
+  final unit = isCelsius ? "°C" : "°F";
+  final tempStr = rounded.toString();
+
+  if (isPersian) {
+    final persianNum = toPersianDigits(tempStr);
+    // Use LRM for correct display in RTL
+    return "\u200E$persianNum$unit";
+  }
+
+  return "$tempStr$unit";
+}
 
 /// فرمت کردن ساعت محلی
 String formatLocalHour(DateTime time, int offsetSeconds) {

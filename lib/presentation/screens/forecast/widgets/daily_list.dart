@@ -52,13 +52,16 @@ class DailyList extends StatelessWidget {
           final dayName = formatter.format(date);
           final titleText = isPersian ? toPersianDigits(dayName) : dayName;
 
-          final unitSymbol = useCelsius ? '°C' : '°F';
-
-          final maxDisplayed = useCelsius ? maxTemp : (maxTemp * 9 / 5) + 32;
-          final minDisplayed = useCelsius ? minTemp : (minTemp * 9 / 5) + 32;
-
-          final maxText = '${maxDisplayed.toStringAsFixed(0)}$unitSymbol';
-          final minText = '${minDisplayed.toStringAsFixed(0)}$unitSymbol';
+          final maxText = formatTemperature(
+            maxTemp,
+            isCelsius: useCelsius,
+            isPersian: isPersian,
+          );
+          final minText = formatTemperature(
+            minTemp,
+            isCelsius: useCelsius,
+            isPersian: isPersian,
+          );
 
           final description = translateWeatherDescription(main, lang: langCode);
           final iconPath = weatherIconAsset(main);
@@ -123,7 +126,7 @@ class DailyList extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                isPersian ? toPersianDigits(maxText) : maxText,
+                                maxText,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -142,7 +145,7 @@ class DailyList extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                isPersian ? toPersianDigits(minText) : minText,
+                                minText,
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.6),
                                   fontSize: 13,

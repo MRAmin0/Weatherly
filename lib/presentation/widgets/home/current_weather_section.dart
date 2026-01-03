@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weatherly_app/l10n/app_localizations.dart';
 import 'package:weatherly_app/core/utils/weather_formatters.dart';
-import 'package:weatherly_app/core/utils/city_utils.dart';
+
 import 'package:weatherly_app/viewmodels/weather_viewmodel.dart';
 import 'package:weatherly_app/presentation/widgets/animations/main_weather_icon.dart';
 
@@ -23,22 +23,18 @@ class CurrentWeatherSection extends StatelessWidget {
     final isPersian = viewModel.lang == 'fa';
     final theme = Theme.of(context);
 
-    final tempValue = viewModel.useCelsius
-        ? current.temp
-        : (current.temp * 9 / 5) + 32;
-
-    final tempString = isPersian
-        ? toPersianDigits(tempValue.toStringAsFixed(0))
-        : tempValue.toStringAsFixed(0);
-
-    final unit = viewModel.useCelsius ? "°C" : "°F";
+    final tempFormatted = formatTemperature(
+      current.temp,
+      isCelsius: viewModel.useCelsius,
+      isPersian: isPersian,
+    );
 
     return Column(
       children: [
         MainWeatherIcon(weatherType: current.weatherType, size: 160),
         const SizedBox(height: 16),
         Text(
-          "$tempString$unit",
+          tempFormatted,
           style: theme.textTheme.displayLarge?.copyWith(
             fontWeight: FontWeight.w900,
             fontSize: 96,
@@ -56,13 +52,7 @@ class CurrentWeatherSection extends StatelessWidget {
         const SizedBox(height: 8),
 
         // --- Real Feel ---
-        _buildRealFeel(
-          context,
-          current.feelsLike,
-          viewModel.useCelsius,
-          isPersian,
-          unit,
-        ),
+        _buildRealFeel(current.feelsLike, viewModel.useCelsius, isPersian),
 
         const SizedBox(height: 12),
         Text(
@@ -85,23 +75,13 @@ class CurrentWeatherSection extends StatelessWidget {
     );
   }
 
-  Widget _buildRealFeel(
-    BuildContext context,
-    double feelsLike,
-    bool useCelsius,
-    bool isPersian,
-    String unit,
-  ) {
-    final realFeelVal = useCelsius ? feelsLike : (feelsLike * 9 / 5) + 32;
-    final realFeelStr = isPersian
-        ? toPersianDigits(realFeelVal.toStringAsFixed(0))
-        : realFeelVal.toStringAsFixed(0);
-
+  Widget _buildRealFeel(double feelsLike, bool useCelsius, bool isPersian) {
+    final formattedStr = formatTemperature(
+      feelsLike,
+      isCelsius: useCelsius,
+      isPersian: isPersian,
+    );
     final label = isPersian ? "حس واقعی" : "Real Feel";
-
-    final formattedStr = isPersian
-        ? "\u200E$realFeelStr$unit"
-        : "$realFeelStr$unit";
 
     return Text(
       "$label: $formattedStr",

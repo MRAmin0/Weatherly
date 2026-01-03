@@ -16,10 +16,7 @@ class AppBackground extends StatelessWidget {
         end: Alignment.bottomCenter,
         colors: brightness == Brightness.dark
             ? [const Color(0xFF1A1A1A), const Color(0xFF000000)]
-            : [
-                theme.colorScheme.surface,
-                theme.colorScheme.surface,
-              ],
+            : [theme.colorScheme.surface, theme.colorScheme.surface],
       ),
     );
 

@@ -85,15 +85,11 @@ class TemperatureChart extends StatelessWidget {
                           weatherTypeToApiName(item.weatherType),
                         );
 
-                        final rawTemp = item.temperature;
-                        final temp = useCelsius
-                            ? rawTemp
-                            : (rawTemp * 9 / 5) + 32;
-                        final unit = useCelsius ? '°' : '°';
-                        final tempText = "${temp.toStringAsFixed(0)}$unit";
-                        final tempLabel = isPersian
-                            ? toPersianDigits(tempText)
-                            : tempText;
+                        final tempLabel = formatTemperature(
+                          item.temperature,
+                          isCelsius: useCelsius,
+                          isPersian: isPersian,
+                        );
 
                         return SideTitleWidget(
                           axisSide: meta.axisSide,
@@ -144,14 +140,14 @@ class TemperatureChart extends StatelessWidget {
                             ? toPersianDigits(time)
                             : time;
 
-                        final tempValue = touchedSpot.y.toStringAsFixed(0);
-                        final tempStr = isPersian
-                            ? toPersianDigits(tempValue)
-                            : tempValue;
-                        final unit = useCelsius ? '°C' : '°F';
+                        final tempStr = formatTemperature(
+                          item.temperature,
+                          isCelsius: useCelsius,
+                          isPersian: isPersian,
+                        );
 
                         return LineTooltipItem(
-                          '$timeStr\n$tempStr$unit',
+                          '$timeStr\n$tempStr',
                           const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

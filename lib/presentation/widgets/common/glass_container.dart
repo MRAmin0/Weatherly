@@ -72,7 +72,7 @@ class GlassContainer extends StatelessWidget {
       margin: margin,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
-        child: disableBlur
+        child: (disableBlur || blur == 0)
             ? containerContent
             : BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
