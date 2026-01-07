@@ -176,6 +176,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final weatherType = vm.currentWeather?.weatherType ?? WeatherType.unknown;
     final activeColor = _getWeatherColor(weatherType, isAppDark);
 
+    final textColor = isAppDark ? Colors.white : Colors.black;
+    final subTextColor = isAppDark
+        ? Colors.white.withValues(alpha: 0.6)
+        : Colors.black.withValues(alpha: 0.6);
+
     return WeatherBackgroundWrapper(
       weatherType: weatherType,
       child: Scaffold(
@@ -199,8 +204,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           child: Center(
                             child: Text(
                               l10n.settings,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: textColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 24,
                                 letterSpacing: 1.2,
@@ -213,24 +218,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // LANGUAGE
                       _buildSectionTitle(l10n.language, isDark: isAppDark),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: ListTile(
-                          leading: const Icon(
+                          leading: Icon(
                             Icons.language_rounded,
-                            color: Colors.white,
+                            color: textColor,
                           ),
                           title: Text(
                             l10n.language,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: textColor),
                           ),
                           subtitle: Text(
                             vm.lang == 'fa' ? l10n.persian : l10n.english,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                            ),
+                            style: TextStyle(color: subTextColor),
                           ),
                           onTap: () => _showLanguageDialog(l10n, vm),
                         ),
@@ -240,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // THEME
                       _buildSectionTitle(l10n.displayMode, isDark: isAppDark),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         borderRadius: 25,
                         child: _buildThemeModeSelector(
@@ -255,7 +258,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // WEATHER SOURCE
                       _buildSectionTitle(l10n.weatherSource, isDark: isAppDark),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         borderRadius: 25,
                         child: _buildWeatherProviderSelector(
@@ -273,20 +276,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         isDark: isAppDark,
                       ),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: SwitchListTile(
                           title: Text(
                             l10n.temperatureUnitCelsius,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: textColor),
                           ),
                           subtitle: Text(
                             l10n.celsiusFahrenheit,
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.6),
-                            ),
+                            style: TextStyle(color: subTextColor),
                           ),
                           activeThumbColor: Colors.white,
                           value: vm.useCelsius,
@@ -297,8 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (states.contains(WidgetState.selected)) {
                               return activeColor; // User requested "not black"
                             }
-                            return Colors
-                                .white60; // Unselected thumb: Dimmed white
+                            return isAppDark ? Colors.white60 : Colors.grey;
                           }),
                           trackOutlineColor: WidgetStateProperty.resolveWith((
                             states,
@@ -306,8 +306,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             if (states.contains(WidgetState.selected)) {
                               return Colors.white;
                             }
-                            return Colors
-                                .white60; // Unselected outline: Dimmed white
+                            return isAppDark ? Colors.white60 : Colors.grey;
                           }),
                         ),
                       ),
@@ -319,26 +318,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         isDark: isAppDark,
                       ),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: Column(
                           children: [
                             SwitchListTile(
-                              secondary: const Icon(
+                              secondary: Icon(
                                 Icons.notifications_active_rounded,
-                                color: Colors.white,
+                                color: textColor,
                               ),
                               title: Text(
                                 l10n.smartNotifications,
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(color: textColor),
                               ),
                               subtitle: Text(
                                 l10n.smartNotificationsDesc,
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
-                                ),
+                                style: TextStyle(color: subTextColor),
                               ),
                               activeThumbColor: Colors.white,
                               value: vm.smartNotificationsEnabled,
@@ -351,33 +348,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 if (states.contains(WidgetState.selected)) {
                                   return activeColor;
                                 }
-                                return Colors.white60;
+                                return isAppDark ? Colors.white60 : Colors.grey;
                               }),
                               trackOutlineColor:
                                   WidgetStateProperty.resolveWith((states) {
                                     if (states.contains(WidgetState.selected)) {
                                       return Colors.white;
                                     }
-                                    return Colors.white60;
+                                    return isAppDark
+                                        ? Colors.white60
+                                        : Colors.grey;
                                   }),
                             ),
-                            Divider(color: Colors.white.withValues(alpha: 0.1)),
+                            Divider(
+                              color: isAppDark
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.1),
+                            ),
                             SwitchListTile(
-                              secondary: const Icon(
+                              secondary: Icon(
                                 Icons.alarm_rounded,
-                                color: Colors.white,
+                                color: textColor,
                               ),
                               title: Text(
                                 l10n.dailyNotifications,
-                                style: const TextStyle(color: Colors.white),
+                                style: TextStyle(color: textColor),
                               ),
                               subtitle: Text(
                                 vm.lang == 'fa'
                                     ? 'ساعت ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}'
                                     : 'Daily summary at ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.6),
-                                ),
+                                style: TextStyle(color: subTextColor),
                               ),
                               activeThumbColor: Colors.white,
                               value: vm.dailyNotificationsEnabled,
@@ -390,43 +391,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 if (states.contains(WidgetState.selected)) {
                                   return activeColor;
                                 }
-                                return Colors.white60;
+                                return isAppDark ? Colors.white60 : Colors.grey;
                               }),
                               trackOutlineColor:
                                   WidgetStateProperty.resolveWith((states) {
                                     if (states.contains(WidgetState.selected)) {
                                       return Colors.white;
                                     }
-                                    return Colors.white60;
+                                    return isAppDark
+                                        ? Colors.white60
+                                        : Colors.grey;
                                   }),
                             ),
                             if (vm.dailyNotificationsEnabled) ...[
                               ListTile(
-                                leading: const Icon(
+                                leading: Icon(
                                   Icons.schedule_rounded,
-                                  color: Colors.white,
+                                  color: textColor,
                                 ),
                                 title: Text(
                                   l10n.notificationTimeLabel,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(color: textColor),
                                 ),
-                                trailing: const Icon(
+                                trailing: Icon(
                                   Icons.edit_rounded,
-                                  color: Colors.white70,
+                                  color: subTextColor,
                                   size: 18,
                                 ),
                                 onTap: () => _showTimePicker(context, vm),
                               ),
                               ListTile(
-                                leading: const Icon(
+                                leading: Icon(
                                   Icons.play_arrow_rounded,
-                                  color: Colors.white,
+                                  color: textColor,
                                 ),
                                 title: Text(
                                   vm.lang == 'fa'
                                       ? 'تست نوتیفیکیشن'
                                       : 'Test Notification',
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(color: textColor),
                                 ),
                                 onTap: () =>
                                     _testDailyNotification(context, vm),
@@ -440,23 +443,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // ABOUT
                       _buildSectionTitle(l10n.aboutApp, isDark: isAppDark),
                       GlassContainer(
-                        isDark: true,
+                        isDark: isAppDark,
                         blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: ListTile(
-                          leading: const Icon(
+                          leading: Icon(
                             Icons.info_outline_rounded,
-                            color: Colors.white,
+                            color: textColor,
                           ),
                           title: Text(
                             l10n.aboutApp,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(color: textColor),
                           ),
-                          trailing: const Icon(
+                          trailing: Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 16,
-                            color: Colors.white70,
+                            color: subTextColor,
                           ),
                           onTap: () {
                             Navigator.push(
@@ -602,7 +605,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
       avatar: Icon(
         icon,
-        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
+        color: (isSelected && !isComingSoon)
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         size: 18,
       ),
       selectedColor: Colors.white,
@@ -617,17 +622,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shadowColor: Colors.transparent,
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
+        color: (isSelected && !isComingSoon)
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
-        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
+        color: (isSelected && !isComingSoon)
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         size: 18,
       ),
       side: BorderSide(
         color: (isSelected && !isComingSoon)
             ? Colors.white
-            : Colors.transparent,
+            : Colors.transparent, // Outline only when selected for style
         width: 1.5,
       ),
 
@@ -655,7 +664,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       avatar: Icon(
         icon,
-        color: isSelected ? activeColor : Colors.white,
+        color: isSelected
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         size: 18,
       ),
       selectedColor: Colors.white,
@@ -666,11 +677,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shadowColor: Colors.transparent,
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: isSelected ? activeColor : Colors.white,
+        color: isSelected
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
-        color: isSelected ? activeColor : Colors.white,
+        color: isSelected
+            ? activeColor
+            : (isAppDark ? Colors.white : Colors.black),
         size: 18,
       ),
       side: BorderSide(
@@ -687,8 +702,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
       child: Text(
         title,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: isDark ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
