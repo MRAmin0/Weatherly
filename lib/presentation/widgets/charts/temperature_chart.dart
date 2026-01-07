@@ -53,7 +53,8 @@ class TemperatureChart extends StatelessWidget {
                 minX: 0,
                 maxX: spots.length.toDouble() - 1,
                 minY: minY - 2,
-                maxY: maxY + 2,
+                maxY:
+                    maxY + 6, // Increased headroom to prevent tooltip clipping
                 titlesData: FlTitlesData(
                   show: true,
                   leftTitles: const AxisTitles(

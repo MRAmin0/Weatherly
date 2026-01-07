@@ -137,6 +137,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Color _getWeatherColor(WeatherType type, bool isDark) {
+    switch (type) {
+      case WeatherType.clear:
+        return isDark ? const Color(0xFF1A237E) : const Color(0xFF01579B);
+      case WeatherType.clouds:
+        return isDark ? const Color(0xFF37474F) : const Color(0xFF546E7A);
+      case WeatherType.rain:
+      case WeatherType.drizzle:
+        return isDark ? const Color(0xFF01579B) : const Color(0xFF1976D2);
+      case WeatherType.thunderstorm:
+        return isDark ? const Color(0xFF311B92) : const Color(0xFF512DA8);
+      case WeatherType.snow:
+        return isDark ? const Color(0xFF455A64) : const Color(0xFF0288D1);
+      case WeatherType.mist:
+      case WeatherType.smoke:
+      case WeatherType.haze:
+      case WeatherType.fog:
+      case WeatherType.sand:
+      case WeatherType.dust:
+      case WeatherType.ash:
+      case WeatherType.squall:
+      case WeatherType.tornado:
+      case WeatherType.atmosphere:
+      case WeatherType.windy:
+        return isDark ? const Color(0xFF263238) : const Color(0xFF607D8B);
+      case WeatherType.unknown:
+        return const Color.fromARGB(128, 73, 73, 73);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -144,6 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final theme = Theme.of(context);
     final isAppDark = theme.brightness == Brightness.dark;
     final weatherType = vm.currentWeather?.weatherType ?? WeatherType.unknown;
+    final activeColor = _getWeatherColor(weatherType, isAppDark);
 
     return WeatherBackgroundWrapper(
       weatherType: weatherType,
@@ -210,7 +241,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       GlassContainer(
                         isDark: true,
                         borderRadius: 25,
-                        child: _buildThemeModeSelector(l10n, vm, isAppDark),
+                        child: _buildThemeModeSelector(
+                          l10n,
+                          vm,
+                          isAppDark,
+                          activeColor,
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -223,6 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           l10n,
                           vm,
                           isAppDark,
+                          activeColor,
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -254,13 +291,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           inactiveTrackColor: Colors.transparent,
                           thumbColor: WidgetStateProperty.resolveWith((states) {
                             if (states.contains(WidgetState.selected)) {
-                              return Colors.black;
+                              return activeColor; // User requested "not black"
                             }
-                            return Colors.white;
+                            return Colors
+                                .white60; // Unselected thumb: Dimmed white
                           }),
-                          trackOutlineColor: WidgetStateProperty.all(
-                            Colors.white,
-                          ),
+                          trackOutlineColor: WidgetStateProperty.resolveWith((
+                            states,
+                          ) {
+                            if (states.contains(WidgetState.selected)) {
+                              return Colors.white;
+                            }
+                            return Colors
+                                .white60; // Unselected outline: Dimmed white
+                          }),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -300,13 +344,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 states,
                               ) {
                                 if (states.contains(WidgetState.selected)) {
-                                  return Colors.black;
+                                  return activeColor;
                                 }
-                                return Colors.white;
+                                return Colors.white60;
                               }),
-                              trackOutlineColor: WidgetStateProperty.all(
-                                Colors.white,
-                              ),
+                              trackOutlineColor:
+                                  WidgetStateProperty.resolveWith((states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.white60;
+                                  }),
                             ),
                             Divider(color: Colors.white.withValues(alpha: 0.1)),
                             SwitchListTile(
@@ -335,13 +383,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 states,
                               ) {
                                 if (states.contains(WidgetState.selected)) {
-                                  return Colors.black;
+                                  return activeColor;
                                 }
-                                return Colors.white;
+                                return Colors.white60;
                               }),
-                              trackOutlineColor: WidgetStateProperty.all(
-                                Colors.white,
-                              ),
+                              trackOutlineColor:
+                                  WidgetStateProperty.resolveWith((states) {
+                                    if (states.contains(WidgetState.selected)) {
+                                      return Colors.white;
+                                    }
+                                    return Colors.white60;
+                                  }),
                             ),
                             if (vm.dailyNotificationsEnabled) ...[
                               ListTile(
@@ -426,6 +478,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     AppLocalizations l10n,
     WeatherViewModel vm,
     bool isAppDark,
+    Color activeColor,
   ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -438,6 +491,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.brightness_auto_rounded,
             vm,
             isAppDark,
+            activeColor,
           ),
           const SizedBox(width: 8),
           _buildThemeChip(
@@ -446,6 +500,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.wb_sunny_rounded,
             vm,
             isAppDark,
+            activeColor,
           ),
           const SizedBox(width: 8),
           _buildThemeChip(
@@ -454,6 +509,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.nightlight_round,
             vm,
             isAppDark,
+            activeColor,
           ),
         ],
       ),
@@ -464,6 +520,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     AppLocalizations l10n,
     WeatherViewModel vm,
     bool isAppDark,
+    Color activeColor,
   ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -476,6 +533,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.cloud_queue_rounded,
             vm,
             isAppDark,
+            activeColor,
           ),
           const SizedBox(width: 8),
           _buildProviderChip(
@@ -484,6 +542,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.wb_sunny_outlined,
             vm,
             isAppDark,
+            activeColor,
           ),
           const SizedBox(width: 8),
           _buildProviderChip(
@@ -492,6 +551,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Icons.language_rounded,
             vm,
             isAppDark,
+            activeColor,
             isComingSoon: true,
           ),
         ],
@@ -504,7 +564,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     String label,
     IconData icon,
     WeatherViewModel vm,
-    bool isAppDark, {
+    bool isAppDark,
+    Color activeColor, {
     bool isComingSoon = false,
   }) {
     final isSelected = vm.provider == targetProvider;
@@ -535,24 +596,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
       avatar: Icon(
         icon,
-        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
+        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
         size: 18,
       ),
-      color: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(WidgetState.selected)) return Colors.white;
-        return Colors.transparent; // Match Language button style
-      }),
+      selectedColor: Colors.white,
+      backgroundColor: Colors.transparent,
+      // Removed color: property to avoid conflicts since we used explicit background/selected colors
+      // but ChoiceChip in older flutter versions might rely on 'selectedColor' and 'backgroundColor'.
+      // If 'color' was working for selected state (returning white), it might be redundant now.
+      // However, to be absolutely sure unselected is transparent:
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       pressElevation: 0,
       shadowColor: Colors.transparent,
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
+        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
         fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
-        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
+        color: (isSelected && !isComingSoon) ? activeColor : Colors.white,
         size: 18,
       ),
       side: BorderSide(
@@ -561,7 +624,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             : Colors.transparent,
         width: 1.5,
       ),
-      shape: const StadiumBorder(),
+
       showCheckmark: false,
     );
   }
@@ -572,6 +635,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     IconData icon,
     WeatherViewModel vm,
     bool isAppDark,
+    Color activeColor,
   ) {
     final isSelected = vm.themeMode == mode;
 
@@ -585,31 +649,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       avatar: Icon(
         icon,
-        color: isSelected ? Colors.black : Colors.white,
+        color: isSelected ? activeColor : Colors.white,
         size: 18,
       ),
-      color: WidgetStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(WidgetState.selected)) return Colors.white;
-        return Colors.transparent; // Match Language button style
-      }),
+      selectedColor: Colors.white,
+      backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       pressElevation: 0,
       shadowColor: Colors.transparent,
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.black : Colors.white,
+        color: isSelected ? activeColor : Colors.white,
         fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
-        color: isSelected ? Colors.black : Colors.white,
+        color: isSelected ? activeColor : Colors.white,
         size: 18,
       ),
       side: BorderSide(
         color: isSelected ? Colors.white : Colors.transparent,
         width: 1.5,
       ),
-      shape: const StadiumBorder(),
+
       showCheckmark: false,
     );
   }
