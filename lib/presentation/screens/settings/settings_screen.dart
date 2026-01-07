@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:weatherly_app/l10n/app_localizations.dart';
 import 'package:weatherly_app/presentation/screens/about/about_screen.dart';
 import 'package:weatherly_app/viewmodels/weather_viewmodel.dart';
+import 'package:weatherly_app/presentation/widgets/home/weather_background_wrapper.dart';
+import 'package:weatherly_app/data/models/weather_type.dart';
 import 'package:weatherly_app/presentation/widgets/common/glass_container.dart';
 import 'package:weatherly_app/data/services/notification_service.dart';
 
@@ -33,10 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) {
         final dialogContent = AlertDialog(
-          backgroundColor: Colors.white.withValues(alpha: 0.1),
+          backgroundColor: Colors.white.withValues(alpha: 0.25),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
           ),
           title: Text(
             l10n.language,
@@ -59,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Navigator.pop(context);
                 },
               ),
-              Divider(color: Colors.white.withOpacity(0.1)),
+              Divider(color: Colors.white.withValues(alpha: 0.1)),
               _LanguageOptionTile(
                 flag: '🇬🇧',
                 label: l10n.english,
@@ -75,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
 
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
           child: dialogContent,
         );
       },
@@ -141,235 +143,244 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final vm = context.watch<WeatherViewModel>();
     final theme = Theme.of(context);
     final isAppDark = theme.brightness == Brightness.dark;
+    final weatherType = vm.currentWeather?.weatherType ?? WeatherType.unknown;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                          child: Text(
-                            l10n.settings,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // LANGUAGE
-                    _buildSectionTitle(l10n.language, isDark: isAppDark),
-                    GlassContainer(
-                      isDark: true,
-                      padding: EdgeInsets.zero,
-                      borderRadius: 25,
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.language_rounded,
-                          color: Colors.white,
-                        ),
-                        title: Text(
-                          l10n.language,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          vm.lang == 'fa' ? l10n.persian : l10n.english,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
-                          ),
-                        ),
-                        onTap: () => _showLanguageDialog(l10n, vm),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // THEME
-                    _buildSectionTitle(l10n.displayMode, isDark: isAppDark),
-                    GlassContainer(
-                      isDark: true,
-                      borderRadius: 25,
-                      child: _buildThemeModeSelector(l10n, vm, isAppDark),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // WEATHER SOURCE
-                    _buildSectionTitle(l10n.weatherSource, isDark: isAppDark),
-                    GlassContainer(
-                      isDark: true,
-                      borderRadius: 25,
-                      child: _buildWeatherProviderSelector(l10n, vm, isAppDark),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // UNITS
-                    _buildSectionTitle(
-                      l10n.temperatureUnitCelsius,
-                      isDark: isAppDark,
-                    ),
-                    GlassContainer(
-                      isDark: true,
-                      padding: EdgeInsets.zero,
-                      borderRadius: 25,
-                      child: SwitchListTile(
-                        title: Text(
-                          l10n.temperatureUnitCelsius,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          l10n.celsiusFahrenheit,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
-                          ),
-                        ),
-                        activeThumbColor: Colors.white,
-                        value: vm.useCelsius,
-                        onChanged: vm.setUseCelsius,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // NOTIFICATIONS
-                    _buildSectionTitle(
-                      l10n.smartNotifications,
-                      isDark: isAppDark,
-                    ),
-                    GlassContainer(
-                      isDark: true,
-                      padding: EdgeInsets.zero,
-                      borderRadius: 25,
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            secondary: const Icon(
-                              Icons.notifications_active_rounded,
-                              color: Colors.white,
-                            ),
-                            title: Text(
-                              l10n.smartNotifications,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              l10n.smartNotificationsDesc,
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
+    return WeatherBackgroundWrapper(
+      weatherType: weatherType,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              controller: _scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SafeArea(
+                        bottom: false,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Center(
+                            child: Text(
+                              l10n.settings,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                letterSpacing: 1.2,
                               ),
                             ),
-                            activeThumbColor: Colors.white,
-                            value: vm.smartNotificationsEnabled,
-                            onChanged: vm.setSmartNotifications,
                           ),
-                          Divider(color: Colors.white.withValues(alpha: 0.1)),
-                          SwitchListTile(
-                            secondary: const Icon(
-                              Icons.alarm_rounded,
-                              color: Colors.white,
-                            ),
-                            title: Text(
-                              l10n.dailyNotifications,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            subtitle: Text(
-                              vm.lang == 'fa'
-                                  ? 'ساعت ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}'
-                                  : 'Daily summary at ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.6),
-                              ),
-                            ),
-                            activeThumbColor: Colors.white,
-                            value: vm.dailyNotificationsEnabled,
-                            onChanged: vm.setDailyNotifications,
+                        ),
+                      ),
+
+                      // LANGUAGE
+                      _buildSectionTitle(l10n.language, isDark: isAppDark),
+                      GlassContainer(
+                        isDark: true,
+                        padding: EdgeInsets.zero,
+                        borderRadius: 25,
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.language_rounded,
+                            color: Colors.white,
                           ),
-                          if (vm.dailyNotificationsEnabled) ...[
-                            ListTile(
-                              leading: const Icon(
-                                Icons.schedule_rounded,
+                          title: Text(
+                            l10n.language,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            vm.lang == 'fa' ? l10n.persian : l10n.english,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.6),
+                            ),
+                          ),
+                          onTap: () => _showLanguageDialog(l10n, vm),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // THEME
+                      _buildSectionTitle(l10n.displayMode, isDark: isAppDark),
+                      GlassContainer(
+                        isDark: true,
+                        borderRadius: 25,
+                        child: _buildThemeModeSelector(l10n, vm, isAppDark),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // WEATHER SOURCE
+                      _buildSectionTitle(l10n.weatherSource, isDark: isAppDark),
+                      GlassContainer(
+                        isDark: true,
+                        borderRadius: 25,
+                        child: _buildWeatherProviderSelector(
+                          l10n,
+                          vm,
+                          isAppDark,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // UNITS
+                      _buildSectionTitle(
+                        l10n.temperatureUnitCelsius,
+                        isDark: isAppDark,
+                      ),
+                      GlassContainer(
+                        isDark: true,
+                        padding: EdgeInsets.zero,
+                        borderRadius: 25,
+                        child: SwitchListTile(
+                          title: Text(
+                            l10n.temperatureUnitCelsius,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            l10n.celsiusFahrenheit,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.6),
+                            ),
+                          ),
+                          activeThumbColor: Colors.white,
+                          value: vm.useCelsius,
+                          onChanged: vm.setUseCelsius,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // NOTIFICATIONS
+                      _buildSectionTitle(
+                        l10n.smartNotifications,
+                        isDark: isAppDark,
+                      ),
+                      GlassContainer(
+                        isDark: true,
+                        padding: EdgeInsets.zero,
+                        borderRadius: 25,
+                        child: Column(
+                          children: [
+                            SwitchListTile(
+                              secondary: const Icon(
+                                Icons.notifications_active_rounded,
                                 color: Colors.white,
                               ),
                               title: Text(
-                                l10n.notificationTimeLabel,
+                                l10n.smartNotifications,
                                 style: const TextStyle(color: Colors.white),
                               ),
-                              trailing: const Icon(
-                                Icons.edit_rounded,
-                                color: Colors.white70,
-                                size: 18,
+                              subtitle: Text(
+                                l10n.smartNotificationsDesc,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                ),
                               ),
-                              onTap: () => _showTimePicker(context, vm),
+                              activeThumbColor: Colors.white,
+                              value: vm.smartNotificationsEnabled,
+                              onChanged: vm.setSmartNotifications,
                             ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.play_arrow_rounded,
+                            Divider(color: Colors.white.withValues(alpha: 0.1)),
+                            SwitchListTile(
+                              secondary: const Icon(
+                                Icons.alarm_rounded,
                                 color: Colors.white,
                               ),
                               title: Text(
+                                l10n.dailyNotifications,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              subtitle: Text(
                                 vm.lang == 'fa'
-                                    ? 'تست نوتیفیکیشن'
-                                    : 'Test Notification',
-                                style: const TextStyle(color: Colors.white),
+                                    ? 'ساعت ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}'
+                                    : 'Daily summary at ${_formatTime(vm.dailyNotificationHour, vm.dailyNotificationMinute)}',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                ),
                               ),
-                              onTap: () => _testDailyNotification(context, vm),
+                              activeThumbColor: Colors.white,
+                              value: vm.dailyNotificationsEnabled,
+                              onChanged: vm.setDailyNotifications,
                             ),
+                            if (vm.dailyNotificationsEnabled) ...[
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.schedule_rounded,
+                                  color: Colors.white,
+                                ),
+                                title: Text(
+                                  l10n.notificationTimeLabel,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                trailing: const Icon(
+                                  Icons.edit_rounded,
+                                  color: Colors.white70,
+                                  size: 18,
+                                ),
+                                onTap: () => _showTimePicker(context, vm),
+                              ),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.play_arrow_rounded,
+                                  color: Colors.white,
+                                ),
+                                title: Text(
+                                  vm.lang == 'fa'
+                                      ? 'تست نوتیفیکیشن'
+                                      : 'Test Notification',
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                onTap: () =>
+                                    _testDailyNotification(context, vm),
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
-                    // ABOUT
-                    _buildSectionTitle(l10n.aboutApp, isDark: isAppDark),
-                    GlassContainer(
-                      isDark: true,
-                      padding: EdgeInsets.zero,
-                      borderRadius: 25,
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.info_outline_rounded,
-                          color: Colors.white,
+                      // ABOUT
+                      _buildSectionTitle(l10n.aboutApp, isDark: isAppDark),
+                      GlassContainer(
+                        isDark: true,
+                        padding: EdgeInsets.zero,
+                        borderRadius: 25,
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.info_outline_rounded,
+                            color: Colors.white,
+                          ),
+                          title: Text(
+                            l10n.aboutApp,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                            color: Colors.white70,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AboutScreen(),
+                              ),
+                            );
+                          },
                         ),
-                        title: Text(
-                          l10n.aboutApp,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        trailing: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 16,
-                          color: Colors.white70,
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const AboutScreen(),
-                            ),
-                          );
-                        },
                       ),
-                    ),
-                    const SizedBox(height: 48),
-                  ],
+                      const SizedBox(height: 48),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -461,14 +472,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }) {
     final isSelected = vm.provider == targetProvider;
 
-    final unselectedBg = isAppDark
-        ? Colors.black.withValues(alpha: 0.25)
-        : Colors.black.withValues(alpha: 0.15);
-
-    final unselectedContent = isAppDark
-        ? Colors.white.withValues(alpha: 0.9)
-        : Colors.black.withValues(alpha: 0.7);
-
     return ChoiceChip(
       label: Column(
         mainAxisSize: MainAxisSize.min,
@@ -495,27 +498,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
       avatar: Icon(
         icon,
-        color: (isSelected && !isComingSoon) ? Colors.black : unselectedContent,
+        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
         size: 18,
       ),
-      backgroundColor: unselectedBg,
-      selectedColor: Colors.white,
-      disabledColor: unselectedBg.withValues(alpha: 0.5),
+      color: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.selected)) return Colors.white;
+        return Colors.transparent;
+      }),
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      pressElevation: 0,
+      shadowColor: Colors.transparent,
+      selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: (isSelected && !isComingSoon) ? Colors.black : unselectedContent,
+        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
         fontWeight: (isSelected && !isComingSoon)
             ? FontWeight.bold
             : FontWeight.normal,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: (isSelected && !isComingSoon)
-              ? Colors.white
-              : Colors.white.withValues(alpha: 0.15),
-          width: 1,
-        ),
+      iconTheme: IconThemeData(
+        color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
+        size: 18,
       ),
+      side: BorderSide(
+        color: (isSelected && !isComingSoon)
+            ? Colors.white
+            : Colors.white.withValues(alpha: 0.3),
+        width: 1.5,
+      ),
+      shape: const StadiumBorder(),
       showCheckmark: false,
     );
   }
@@ -529,15 +540,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     final isSelected = vm.themeMode == mode;
 
-    // 🎨 Dynamic colors for visibility
-    final unselectedBg = isAppDark
-        ? Colors.black.withValues(alpha: 0.25)
-        : Colors.black.withValues(alpha: 0.15); // Better contrast in light mode
-
-    final unselectedContent = isAppDark
-        ? Colors.white.withValues(alpha: 0.9)
-        : Colors.black.withValues(alpha: 0.7);
-
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -549,24 +551,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
       avatar: Icon(
         icon,
-        color: isSelected ? Colors.black : unselectedContent,
+        color: isSelected ? Colors.black : Colors.white,
         size: 18,
       ),
-      backgroundColor: unselectedBg,
-      selectedColor: Colors.white,
+      color: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.selected)) return Colors.white;
+        return Colors.transparent;
+      }),
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      pressElevation: 0,
+      shadowColor: Colors.transparent,
+      selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.black : unselectedContent,
+        color: isSelected ? Colors.black : Colors.white,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isSelected
-              ? Colors.white
-              : Colors.white.withValues(alpha: 0.15),
-          width: 1,
-        ),
+      iconTheme: IconThemeData(
+        color: isSelected ? Colors.black : Colors.white,
+        size: 18,
       ),
+      side: BorderSide(
+        color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.3),
+        width: 1.5,
+      ),
+      shape: const StadiumBorder(),
       showCheckmark: false,
     );
   }
@@ -576,8 +585,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
       child: Text(
         title,
-        style: TextStyle(
-          color: isDark ? Colors.white : Colors.black.withValues(alpha: 0.8),
+        style: const TextStyle(
+          color: Colors.white,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),

@@ -306,10 +306,10 @@ ISSUE DESCRIPTION
       barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) {
         final dialog = AlertDialog(
-          backgroundColor: Colors.black.withValues(alpha: 0.8),
+          backgroundColor: Colors.white.withValues(alpha: 0.25),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: BorderSide(color: Colors.white.withValues(alpha: 0.20)),
+            side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
           ),
           title: Text(
             l10n.versionHistory,
@@ -362,7 +362,7 @@ ISSUE DESCRIPTION
         if (kIsWeb) return dialog;
 
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
           child: dialog,
         );
       },

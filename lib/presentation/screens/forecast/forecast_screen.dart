@@ -123,8 +123,8 @@ class _ForecastScreenState extends State<ForecastScreen> {
                               borderRadius: BorderRadius.circular(35),
                               child: BackdropFilter(
                                 filter: ImageFilter.blur(
-                                  sigmaX: 10,
-                                  sigmaY: 10,
+                                  sigmaX: 25,
+                                  sigmaY: 25,
                                 ),
                                 child: Container(
                                   padding: const EdgeInsets.fromLTRB(
@@ -134,11 +134,11 @@ class _ForecastScreenState extends State<ForecastScreen> {
                                     16,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.1),
+                                    color: Colors.white.withValues(alpha: 0.25),
                                     borderRadius: BorderRadius.circular(35),
                                     border: Border.all(
                                       color: Colors.white.withValues(
-                                        alpha: 0.15,
+                                        alpha: 0.3,
                                       ),
                                     ),
                                   ),

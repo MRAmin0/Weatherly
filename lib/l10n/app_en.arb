@@ -101,5 +101,9 @@
   "dailyNotificationsDesc": "Receive a weather summary every morning at 7 AM",
   "notificationTimeLabel": "Notification time",
   "noInternetConnection": "No internet connection. Please check your connection.",
-  "retry": "Retry"
+  "retry": "Retry",
+  "vpnDetected": "VPN Detected",
+  "vpnWarningMessage": "You appear to be using a VPN. For the best experience and accurate location data, please turn it off.",
+  "continueAnyway": "Continue Anyway",
+  "weatherSource": "Weather Source"
 }

@@ -318,6 +318,13 @@ class WeatherViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // پاک کردن تمام تاریخچه جستجو
+  Future<void> clearAllRecent() async {
+    recent = [];
+    await _savePref('recent', recent);
+    notifyListeners();
+  }
+
   // ------------------------- WEATHER LOGIC -------------------------
   void _clearWeatherData() {
     currentWeather = null;
@@ -348,13 +355,18 @@ class WeatherViewModel extends ChangeNotifier {
         _setLoading(false);
         return;
       }
-      await _processWeatherData(data);
+      // Use the searched text as the initial name to ensure better UX
+      await _processWeatherData(data, overrideName: text);
     } catch (e, st) {
       _handleError(e, st, 'fetchWeatherByCity');
     }
   }
 
-  Future<void> fetchWeatherByCoordinates(double lat, double lon) async {
+  Future<void> fetchWeatherByCoordinates(
+    double lat,
+    double lon, {
+    String? overrideName,
+  }) async {
     _clearWeatherData();
     _setLoading(true);
 
@@ -369,15 +381,18 @@ class WeatherViewModel extends ChangeNotifier {
         _setLoading(false);
         return;
       }
-      await _processWeatherData(data);
+      await _processWeatherData(data, overrideName: overrideName);
     } catch (e, st) {
       _handleError(e, st, 'fetchWeatherByCoordinates');
     }
   }
 
-  Future<void> _processWeatherData(Map<String, dynamic> data) async {
+  Future<void> _processWeatherData(
+    Map<String, dynamic> data, {
+    String? overrideName,
+  }) async {
     currentWeather = CurrentWeather.fromJson(data);
-    location = currentWeather!.cityName;
+    location = overrideName ?? currentWeather!.cityName;
     error = null;
     _addRecent(location).ignore();
 
@@ -689,7 +704,11 @@ class WeatherViewModel extends ChangeNotifier {
 
   Future<void> refresh() async {
     if (currentWeather != null) {
-      await fetchWeatherByCoordinates(currentWeather!.lat, currentWeather!.lon);
+      await fetchWeatherByCoordinates(
+        currentWeather!.lat,
+        currentWeather!.lon,
+        overrideName: location,
+      );
     } else {
       await fetchWeatherByCity(defaultCity);
     }
@@ -751,7 +770,7 @@ class WeatherViewModel extends ChangeNotifier {
     location = cityName;
     notifyListeners();
 
-    await fetchWeatherByCoordinates(lat, lon);
+    await fetchWeatherByCoordinates(lat, lon, overrideName: cityName);
   }
 
   Future<void> _addRecent(String city) async {

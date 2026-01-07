@@ -17,7 +17,7 @@ class GlassContainer extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderRadius = 20,
-    this.blur = 15,
+    this.blur = 25,
     this.isDark = false,
     this.onTap,
   });
@@ -35,12 +35,12 @@ class GlassContainer extends StatelessWidget {
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDarkMode
-            ? Colors.black.withValues(alpha: disableBlur ? 0.8 : 0.2)
-            : Colors.white.withValues(alpha: disableBlur ? 0.9 : 0.2),
+            ? Colors.black.withValues(alpha: disableBlur ? 0.8 : 0.25)
+            : Colors.white.withValues(alpha: disableBlur ? 0.9 : 0.25),
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
           color: isDarkMode
-              ? Colors.white.withValues(alpha: 0.1)
+              ? Colors.white.withValues(alpha: 0.3)
               : Colors.white.withValues(alpha: 0.3),
           width: 1.0,
         ),

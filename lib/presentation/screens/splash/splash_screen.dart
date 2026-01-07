@@ -55,11 +55,42 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    // 2. Check Internet
-    bool hasInternet = await NetworkService.hasInternet();
-    while (!hasInternet && mounted) {
+    // 2. Check Network Status
+    if (!mounted) return;
+
+    NetworkStatus status = await NetworkService.checkNetworkStatus();
+
+    // Blocking check for Offline
+    while (status == NetworkStatus.offline && mounted) {
       await _showNoInternetDialog();
-      hasInternet = await NetworkService.hasInternet();
+      status = await NetworkService.checkNetworkStatus();
+    }
+
+    if (!mounted) return;
+
+    // Warning check for VPN (User can continue)
+    if (status == NetworkStatus.vpn && mounted) {
+      final shouldContinue = await _showVpnDialog();
+      if (!shouldContinue && mounted) {
+        // If user didn't want to continue (maybe they want to turn off VPN and retry)
+        // We can loop or just re-check. Let's re-check.
+        status = await NetworkService.checkNetworkStatus();
+        // If they turned off VPN, status might be online now.
+        // If they didn't, it's still VPN.
+        // For simplicity, if they clicked "Retry" (which returns false), we re-run this logic?
+        // Actually let's make _showVpnDialog return true if "Continue", false if "Retry".
+        while (status == NetworkStatus.vpn && !shouldContinue && mounted) {
+          // If user clicked Retry, we check again.
+          status = await NetworkService.checkNetworkStatus();
+          if (status == NetworkStatus.vpn && mounted) {
+            // Still VPN, ask again ? Or just proceed?
+            // User asked "give a message", not "block them".
+            // But valid to let them retry.
+            final retry = await _showVpnDialog();
+            if (retry) break; // Break loop if they say Continue
+          }
+        }
+      }
     }
 
     if (!mounted) return;
@@ -102,6 +133,54 @@ class _SplashScreenState extends State<SplashScreen>
         ],
       ),
     );
+  }
+
+  Future<bool> _showVpnDialog() async {
+    final l10n = AppLocalizations.of(context)!;
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Icon(
+              Icons.vpn_lock_rounded,
+              size: 48,
+              color: Colors.blueAccent,
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.vpnDetected,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.vpnWarningMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // Retry
+                },
+                child: Text(l10n.retry),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // Continue
+                },
+                child: Text(l10n.continueAnyway),
+              ),
+            ],
+          ),
+        ) ??
+        true; // Default to continue if dismissed (though barrier is false)
   }
 
   Future<void> _requestPermissions() async {

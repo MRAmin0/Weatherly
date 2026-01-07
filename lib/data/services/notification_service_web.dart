@@ -1,4 +1,5 @@
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
+import 'dart:js_interop';
 import 'package:flutter/foundation.dart';
 
 class NotificationService {
@@ -16,14 +17,11 @@ class NotificationService {
 
   Future<bool> requestPermission() async {
     try {
-      if (!html.Notification.supported) {
-        debugPrint(
-          'NotificationService (Web): Notifications not supported in this browser',
-        );
-        return false;
-      }
+      // In package:web, we check 'Notification' on window or just use the class
+      // However, typically validation is simple.
+      // Notification.requestPermission returns a Promise<String>.
 
-      final permission = await html.Notification.requestPermission();
+      final permission = await web.Notification.requestPermission().toDart;
       debugPrint('NotificationService (Web): Permission result: $permission');
       return permission == 'granted';
     } catch (e) {
@@ -37,9 +35,7 @@ class NotificationService {
     required String body,
     String? payload,
   }) async {
-    if (!html.Notification.supported) return;
-
-    if (html.Notification.permission != 'granted') {
+    if (web.Notification.permission != 'granted') {
       debugPrint(
         'NotificationService (Web): Permission not granted, cannot show notification',
       );
@@ -47,7 +43,10 @@ class NotificationService {
     }
 
     try {
-      html.Notification(title, body: body, icon: 'icons/Icon-192.png');
+      web.Notification(
+        title,
+        web.NotificationOptions(body: body, icon: 'icons/Icon-192.png'),
+      );
       debugPrint('NotificationService (Web): Shown: $title');
     } catch (e) {
       debugPrint('NotificationService (Web): Show error: $e');

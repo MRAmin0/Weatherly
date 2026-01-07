@@ -2,18 +2,27 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 // تغییر ۱: ایمپورت پکیج جدید (Plus)
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
+enum NetworkStatus { online, offline, vpn }
+
 class NetworkService {
   static Future<bool> hasInternet() async {
+    final status = await checkNetworkStatus();
+    return status == NetworkStatus.online;
+  }
+
+  static Future<NetworkStatus> checkNetworkStatus() async {
     final connectivity = await Connectivity().checkConnectivity();
 
-    // این بخش مربوط به Connectivity Plus است و کاملا درست است
-    if (connectivity.isEmpty ||
-        connectivity.contains(ConnectivityResult.none)) {
-      return false;
+    if (connectivity.contains(ConnectivityResult.vpn)) {
+      return NetworkStatus.vpn;
     }
 
-    // تغییر ۲ و ۳: استفاده از کلاس و متد جدید
-    // این متد در وب هم کار می‌کند و دیگر کرش نمی‌کند
-    return await InternetConnection().hasInternetAccess;
+    if (connectivity.isEmpty ||
+        connectivity.contains(ConnectivityResult.none)) {
+      return NetworkStatus.offline;
+    }
+
+    final hasNet = await InternetConnection().hasInternetAccess;
+    return hasNet ? NetworkStatus.online : NetworkStatus.offline;
   }
 }

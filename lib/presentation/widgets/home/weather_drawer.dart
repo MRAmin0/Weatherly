@@ -97,7 +97,28 @@ class WeatherDrawer extends StatelessWidget {
                 ),
 
                 if (vm.recent.isNotEmpty) ...[
-                  _buildSectionHeader(l10n.recentLocations),
+                  _buildSectionHeader(
+                    l10n.recentLocations,
+                    trailing: TextButton(
+                      onPressed: () => vm.clearAllRecent(),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 0,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        l10n.clearAll,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                   ...vm.recent.map((city) {
                     return _buildLocationTile(
                       context: context,
@@ -124,17 +145,23 @@ class WeatherDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, {Widget? trailing}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(28, 8, 28, 12),
-      child: Text(
-        title.toUpperCase(),
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.5),
-          fontWeight: FontWeight.bold,
-          fontSize: 11,
-          letterSpacing: 1.5,
-        ),
+      padding: const EdgeInsets.fromLTRB(28, 8, 16, 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.5),
+              fontWeight: FontWeight.bold,
+              fontSize: 11,
+              letterSpacing: 1.5,
+            ),
+          ),
+          if (trailing != null) trailing,
+        ],
       ),
     );
   }
@@ -186,13 +213,37 @@ class WeatherDrawer extends StatelessWidget {
             vm.fetchWeatherByCity(city);
             Navigator.pop(context);
           },
-          trailing: isSelected
-              ? const Icon(
-                  Icons.check_circle_rounded,
-                  color: Colors.white,
-                  size: 20,
-                )
-              : null,
+          trailing: isPinnedSection
+              ? (isSelected
+                    ? const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      )
+                    : null)
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isSelected)
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        color: Colors.white54,
+                        size: 18,
+                      ),
+                      onPressed: () => vm.removeRecent(city),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      splashRadius: 20,
+                      tooltip: l10n.clear,
+                    ),
+                  ],
+                ),
         ),
       ),
     );

@@ -64,22 +64,49 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkInternetOnStart() async {
-    final online = await NetworkService.hasInternet();
-    if (!online && mounted) {
+    final status = await NetworkService.checkNetworkStatus();
+    if (!mounted) return;
+
+    final l10n = AppLocalizations.of(context)!;
+
+    if (status == NetworkStatus.offline) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text("عدم اتصال به اینترنت"),
-          content: const Text(
-            "برای استفاده از برنامه، اتصال اینترنت خود را بررسی کنید.",
-          ),
+          title: Text(
+            l10n.noInternetConnection,
+          ), // Using localized title if possible, or icon
+          content: Text(l10n.noInternetConnection),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("باشه"),
+              child: const Text("OK"), // Or localized 'retry'/'close'
+            ),
+          ],
+        ),
+      );
+    } else if (status == NetworkStatus.vpn) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              const Icon(Icons.vpn_lock, color: Colors.blue),
+              const SizedBox(width: 8),
+              Text(l10n.vpnDetected),
+            ],
+          ),
+          content: Text(l10n.vpnWarningMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.continueAnyway),
             ),
           ],
         ),
@@ -290,15 +317,15 @@ class _HomePageState extends State<HomePage> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(35),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
         child: Container(
           margin: const EdgeInsets.only(top: 8),
           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: Colors.white.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(35),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: 0.3),
               width: 1.5,
             ),
             boxShadow: [
