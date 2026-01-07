@@ -77,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
 
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: dialogContent,
         );
       },
@@ -214,6 +214,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSectionTitle(l10n.language, isDark: isAppDark),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: ListTile(
@@ -240,6 +241,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSectionTitle(l10n.displayMode, isDark: isAppDark),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         borderRadius: 25,
                         child: _buildThemeModeSelector(
                           l10n,
@@ -254,6 +256,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSectionTitle(l10n.weatherSource, isDark: isAppDark),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         borderRadius: 25,
                         child: _buildWeatherProviderSelector(
                           l10n,
@@ -271,6 +274,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: SwitchListTile(
@@ -316,6 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: Column(
@@ -436,6 +441,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _buildSectionTitle(l10n.aboutApp, isDark: isAppDark),
                       GlassContainer(
                         isDark: true,
+                        blur: 0, // Performance optimization
                         padding: EdgeInsets.zero,
                         borderRadius: 25,
                         child: ListTile(

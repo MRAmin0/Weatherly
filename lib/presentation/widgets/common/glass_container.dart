@@ -17,7 +17,7 @@ class GlassContainer extends StatelessWidget {
     this.padding,
     this.margin,
     this.borderRadius = 20,
-    this.blur = 25,
+    this.blur = 12,
     this.isDark = false,
     this.onTap,
   });
@@ -70,14 +70,16 @@ class GlassContainer extends StatelessWidget {
 
     Widget content = Container(
       margin: margin,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: (disableBlur || blur == 0)
-            ? containerContent
-            : BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-                child: containerContent,
-              ),
+      child: RepaintBoundary(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(borderRadius),
+          child: (disableBlur || blur <= 0)
+              ? containerContent
+              : BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+                  child: containerContent,
+                ),
+        ),
       ),
     );
 

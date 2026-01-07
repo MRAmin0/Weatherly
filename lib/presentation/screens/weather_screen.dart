@@ -60,12 +60,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
       weatherType: weatherType,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: PageView(
-          controller: _controller,
-          onPageChanged: (index) {
-            setState(() => _selectedIndex = index);
-          },
-          children: pages,
+        body: RepaintBoundary(
+          child: PageView(
+            controller: _controller,
+            onPageChanged: (index) {
+              setState(() => _selectedIndex = index);
+            },
+            children: pages,
+          ),
         ),
         bottomNavigationBar: NavigationBarTheme(
           data: NavigationBarThemeData(
