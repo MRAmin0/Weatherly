@@ -250,6 +250,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           activeThumbColor: Colors.white,
                           value: vm.useCelsius,
                           onChanged: vm.setUseCelsius,
+                          activeTrackColor: Colors.white,
+                          inactiveTrackColor: Colors.transparent,
+                          thumbColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return Colors.black;
+                            }
+                            return Colors.white;
+                          }),
+                          trackOutlineColor: WidgetStateProperty.all(
+                            Colors.white,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -283,6 +294,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               activeThumbColor: Colors.white,
                               value: vm.smartNotificationsEnabled,
                               onChanged: vm.setSmartNotifications,
+                              activeTrackColor: Colors.white,
+                              inactiveTrackColor: Colors.transparent,
+                              thumbColor: WidgetStateProperty.resolveWith((
+                                states,
+                              ) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return Colors.black;
+                                }
+                                return Colors.white;
+                              }),
+                              trackOutlineColor: WidgetStateProperty.all(
+                                Colors.white,
+                              ),
                             ),
                             Divider(color: Colors.white.withValues(alpha: 0.1)),
                             SwitchListTile(
@@ -305,6 +329,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               activeThumbColor: Colors.white,
                               value: vm.dailyNotificationsEnabled,
                               onChanged: vm.setDailyNotifications,
+                              activeTrackColor: Colors.white,
+                              inactiveTrackColor: Colors.transparent,
+                              thumbColor: WidgetStateProperty.resolveWith((
+                                states,
+                              ) {
+                                if (states.contains(WidgetState.selected)) {
+                                  return Colors.black;
+                                }
+                                return Colors.white;
+                              }),
+                              trackOutlineColor: WidgetStateProperty.all(
+                                Colors.white,
+                              ),
                             ),
                             if (vm.dailyNotificationsEnabled) ...[
                               ListTile(
@@ -503,7 +540,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       color: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) return Colors.white;
-        return Colors.transparent;
+        return Colors.transparent; // Match Language button style
       }),
       surfaceTintColor: Colors.transparent,
       elevation: 0,
@@ -512,9 +549,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
         color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
-        fontWeight: (isSelected && !isComingSoon)
-            ? FontWeight.bold
-            : FontWeight.normal,
+        fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
         color: (isSelected && !isComingSoon) ? Colors.black : Colors.white,
@@ -523,7 +558,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       side: BorderSide(
         color: (isSelected && !isComingSoon)
             ? Colors.white
-            : Colors.white.withValues(alpha: 0.3),
+            : Colors.transparent,
         width: 1.5,
       ),
       shape: const StadiumBorder(),
@@ -546,7 +581,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onSelected: (val) {
         if (val) {
           vm.setThemeMode(mode);
-          vm.setUseSystemColor(mode == ThemeMode.system);
         }
       },
       avatar: Icon(
@@ -556,7 +590,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       color: WidgetStateProperty.resolveWith<Color?>((states) {
         if (states.contains(WidgetState.selected)) return Colors.white;
-        return Colors.transparent;
+        return Colors.transparent; // Match Language button style
       }),
       surfaceTintColor: Colors.transparent,
       elevation: 0,
@@ -565,14 +599,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       selectedShadowColor: Colors.transparent,
       labelStyle: TextStyle(
         color: isSelected ? Colors.black : Colors.white,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontWeight: FontWeight.bold, // Always bold for better legibility
       ),
       iconTheme: IconThemeData(
         color: isSelected ? Colors.black : Colors.white,
         size: 18,
       ),
       side: BorderSide(
-        color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.3),
+        color: isSelected ? Colors.white : Colors.transparent,
         width: 1.5,
       ),
       shape: const StadiumBorder(),

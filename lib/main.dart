@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dynamic_color/dynamic_color.dart';
+
 import 'package:device_preview/device_preview.dart';
 
 import 'l10n/app_localizations.dart';
@@ -32,78 +32,63 @@ void main() async {
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
-      builder: (context) => DynamicColorBuilder(
-        builder: (lightDynamic, darkDynamic) {
-          return ChangeNotifierProvider(
-            create: (_) => WeatherViewModel(),
-            child: Consumer<WeatherViewModel>(
-              builder: (context, viewModel, _) {
-                final bool useSystem = viewModel.useSystemColor;
+      builder: (context) {
+        return ChangeNotifierProvider(
+          create: (_) => WeatherViewModel(),
+          child: Consumer<WeatherViewModel>(
+            builder: (context, viewModel, _) {
+              // Light Theme
+              final lightScheme = ColorScheme.fromSeed(
+                seedColor: viewModel.seedColor,
+                brightness: Brightness.light,
+              );
 
-                // Light Theme
-                ColorScheme lightScheme;
-                if (useSystem && lightDynamic != null) {
-                  lightScheme = lightDynamic.harmonized();
-                } else {
-                  lightScheme = ColorScheme.fromSeed(
-                    seedColor: viewModel.seedColor,
-                    brightness: Brightness.light,
+              // Dark Theme
+              final darkScheme = ColorScheme.fromSeed(
+                seedColor: viewModel.seedColor,
+                brightness: Brightness.dark,
+              );
+
+              return MaterialApp(
+                title: 'Weatherly',
+                debugShowCheckedModeBanner: false,
+
+                locale: Locale(viewModel.lang),
+
+                builder: (context, child) {
+                  child = DevicePreview.appBuilder(context, child);
+                  final isFarsi =
+                      Localizations.localeOf(context).languageCode == 'fa';
+                  return Directionality(
+                    textDirection: isFarsi
+                        ? TextDirection.rtl
+                        : TextDirection.ltr,
+                    child: child,
                   );
-                }
+                },
 
-                // Dark Theme
-                ColorScheme darkScheme;
-                if (useSystem && darkDynamic != null) {
-                  darkScheme = darkDynamic.harmonized();
-                } else {
-                  darkScheme = ColorScheme.fromSeed(
-                    seedColor: viewModel.seedColor,
-                    brightness: Brightness.dark,
-                  );
-                }
+                supportedLocales: AppLocalizations.supportedLocales,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
 
-                return MaterialApp(
-                  title: 'Weatherly',
-                  debugShowCheckedModeBanner: false,
+                themeMode: viewModel.themeMode,
 
-                  locale: Locale(viewModel.lang),
+                theme: ThemeData(
+                  useMaterial3: true,
+                  fontFamily: 'Vazir',
+                  colorScheme: lightScheme,
+                ),
+                darkTheme: ThemeData(
+                  useMaterial3: true,
+                  fontFamily: 'Vazir',
+                  colorScheme: darkScheme,
+                ),
 
-                  builder: (context, child) {
-                    child = DevicePreview.appBuilder(context, child);
-                    final isFarsi =
-                        Localizations.localeOf(context).languageCode == 'fa';
-                    return Directionality(
-                      textDirection: isFarsi
-                          ? TextDirection.rtl
-                          : TextDirection.ltr,
-                      child: child, // ✅ FIX: علامت '!' حذف شد
-                    );
-                  },
-
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-
-                  themeMode: viewModel.themeMode,
-
-                  theme: ThemeData(
-                    useMaterial3: true,
-                    fontFamily: 'Vazir',
-                    colorScheme: lightScheme,
-                  ),
-                  darkTheme: ThemeData(
-                    useMaterial3: true,
-                    fontFamily: 'Vazir',
-                    colorScheme: darkScheme,
-                  ),
-
-                  home: const SplashScreen(),
-                );
-              },
-            ),
-          );
-        },
-      ),
+                home: const SplashScreen(),
+              );
+            },
+          ),
+        );
+      },
     ),
   );
 }

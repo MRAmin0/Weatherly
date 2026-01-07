@@ -27,7 +27,7 @@ class WeatherViewModel extends ChangeNotifier {
   // ------------------------- UI / THEME STATE -------------------------
   ThemeMode themeMode = ThemeMode.system;
   Color seedColor = Colors.deepPurple;
-  bool useSystemColor = false;
+
   WeatherProvider provider = WeatherProvider.openWeather;
 
   String defaultCity = 'Tehran';
@@ -81,7 +81,7 @@ class WeatherViewModel extends ChangeNotifier {
     useCelsius = prefs.getBool('useCelsius') ?? true;
     lang = prefs.getString('lang') ?? 'fa';
     recent = prefs.getStringList('recent') ?? [];
-    useSystemColor = prefs.getBool('useSystemColor') ?? false;
+    recent = prefs.getStringList('recent') ?? [];
     defaultCity = prefs.getString('defaultCity') ?? 'Tehran';
 
     // Notification settings
@@ -169,17 +169,7 @@ class WeatherViewModel extends ChangeNotifier {
     if (seedColor.toARGB32() == color.toARGB32()) return;
     seedColor = color;
     await _savePref('seedColor', color.toARGB32());
-    if (useSystemColor) {
-      await setUseSystemColor(false);
-    } else {
-      notifyListeners();
-    }
-  }
-
-  Future<void> setUseSystemColor(bool value) async {
-    if (useSystemColor == value) return;
-    useSystemColor = value;
-    await _savePref('useSystemColor', value);
+    await _savePref('seedColor', color.toARGB32());
     notifyListeners();
   }
 
