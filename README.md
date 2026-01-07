@@ -8,12 +8,12 @@
 
 Fast performance, minimal design, professional user experience
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/MRAmin0/Weatherly/releases)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/MRAmin0/Weatherly/releases)
 [![Flutter](https://img.shields.io/badge/Flutter-3.35.7+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.9.2+-0175C2?logo=dart)](https://dart.dev)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-**[🌐 Web Version](https://weatherly-zeta.vercel.app/)** • **[📥 Download APK](https://github.com/MRAmin0/Weatherly/releases/download/v2.0.0/weatherly-v2.0.0.apk)** • **[🛍 Myket](https://myket.ir/app/com.weatherly.app)**
+**[🌐 Web Version](https://weatherly-zeta.vercel.app/)** • **[📥 Download APK](https://github.com/MRAmin0/Weatherly/releases/download/v2.1.0/app-release.apk)** • **[🛍 Myket](https://myket.ir/app/com.weatherly.app)**
 
 **🇮🇷 [نسخه فارسی](README_FA.md)**
 
@@ -84,7 +84,7 @@ Fast performance, minimal design, professional user experience
 
 <div align="center">
 
-[![Download APK](https://img.shields.io/badge/Download-APK_v2.0.0-6A5ACD?style=for-the-badge&logo=android)](https://github.com/MRAmin0/Weatherly/releases/download/v2.0.0/weatherly-v2.0.0.apk)
+[![Download APK](https://img.shields.io/badge/Download-APK_v2.1.0-6A5ACD?style=for-the-badge&logo=android)](https://github.com/MRAmin0/Weatherly/releases/download/v2.1.0/app-release.apk)
 
 **File size:** ~57 MB | **Android:** 5.0+ (API 21)
 
@@ -159,26 +159,57 @@ flutter build apk --release
 
 ## 📝 Changelog
 
-### 🔔 Version 2.0.0 (Latest)
-- ✨ Smart weather notifications
-- ⏰ Daily morning alerts with custom time
-- 🧪 Test notification button
-- 🐛 Fixed connection error on startup
+### 🚀 Version 2.1.0 (Latest)
+
+#### ✨ New Features
+- 📡 **VPN Guard (Network Intelligence)**  
+  Weatherly now detects VPN connections to ensure weather data is fetched accurately and without blockages.
+
+- 🎨 **Dynamic Weather Colors**  
+  UI elements (Switches, Chips, Toggles) automatically sync with the current weather background.  
+  No more static purple—the UI adapts to the sky.
+
+- ⚡ **Extreme Performance & Battery Save**  
+  Optimized for older and low-end devices.  
+  Improved rendering using `RepaintBoundary` and optimized Glassmorphism effects, resulting in smoother performance with significantly lower RAM and CPU usage.
+
+- ☀️ **Light Mode Refinement**  
+  Fully resolved visibility issues in Light Mode.  
+  Texts and icons are now crisp and clearly readable on light backgrounds.
+
+#### 🛠️ Improvements & Bug Fixes
+- 📈 **Chart Visibility**: Fixed temperature chart clipping; all labels and timestamps are now fully visible.
+- 🧹 **Code Cleanup**: Removed heavy `dynamic_color` dependencies and migrated to modern `package:web` for a lighter build.
+- ⚙️ **Settings UI**: Improved readability of unselected theme and provider chips.
+
+---
+
+### 🔔 Version 2.0.0
+- ✨ Smart weather notifications  
+- ⏰ Daily morning alerts with custom time  
+- 🧪 Test notification button  
+- 🐛 Fixed connection error on startup  
+
+---
 
 ### 💎 Version 1.9.0
-- 🎨 Complete UI redesign
-- 🌈 Dynamic backgrounds
-- ✨ New animations
+- 🎨 Complete UI redesign  
+- 🌈 Dynamic backgrounds  
+- ✨ New animations  
+
+---
 
 ### 🌈 Version 1.8.0
-- ✨ Full ColorScheme integration
-- 🎨 Updated backgrounds, search bar, AQI card
-- 🌈 Dynamic color support (Material You)
-- � Full Material Design 3 support
+- ✨ Full `ColorScheme` integration  
+- 🎨 Updated backgrounds, search bar, and AQI card  
+- 🌈 Dynamic color support (Material You)  
+- 🎯 Full Material Design 3 support  
+
+---
 
 ### ⭐ Version 1.7.0
-- � Bug fixes and stability improvements
-- 📡 Proper message when offline
+- 🐛 Bug fixes and stability improvements  
+- 📡 Proper offline state messaging  
 
 ---
 
