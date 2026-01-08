@@ -1,5 +1,6 @@
-import 'package:web/web.dart' as web;
 import 'dart:js_interop';
+
+import 'package:web/web.dart' as web;
 import 'package:flutter/foundation.dart';
 
 class NotificationService {
